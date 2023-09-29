@@ -12,18 +12,18 @@ import android.widget.TextView
 
 class MainActivity : AppCompatActivity() {
 
+    val viewModel = CalculatorViewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val num1 = findViewById(R.id.editTextText1) as EditText
-        val num2 = findViewById(R.id.editTextText2) as EditText
-        val total = findViewById(R.id.textViewResultado) as TextView
-        val button = findViewById(R.id.buttonTotal) as Button
-        val operatorList = findViewById(R.id.spinner) as Spinner
+        val num1 = findViewById<EditText>(R.id.editTextText1)
+        val num2: EditText = findViewById(R.id.editTextText2)
+        val textViewTotal = findViewById<TextView>(R.id.textViewResultado)
+        val button = findViewById<Button>(R.id.buttonTotal)
+        val operatorList = findViewById<Spinner>(R.id.spinner)
         var operatorConverted = operatorList.toString()
-
 
         var operator = arrayOf("Selecione o operador da expressão","+", "-", "/", "*")
         operatorList.adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, operator)
@@ -41,23 +41,16 @@ class MainActivity : AppCompatActivity() {
         button.setOnClickListener{
             val val1 = num1.text.toString().toDouble()
             val val2 = num2.text.toString().toDouble()
-
-            if (operatorConverted == "+") {
-                    val result = val1 + val2
-                    total.setText(result.toString())
-             } else if (operatorConverted == "-") {
-                val result = val1 - val2
-                total.setText(result.toString())
-            }else if (operatorConverted == "*") {
-                val result = val1 * val2
-                total.setText(result.toString())
-            }else if (operatorConverted == "/") {
-                val result = val1 / val2
-                total.setText(result.toString())
-            }
-            else{
-                total.text= "Por favor, selecione um operador válido"
-            }
+            viewModel.runOperation(operatorConverted, val1, val2 )
         }
+
+        viewModel.resultLiveData.observe(this) {
+            textViewTotal.text = it.toString()
+        }
+
     }
+
+
+
+
 }
